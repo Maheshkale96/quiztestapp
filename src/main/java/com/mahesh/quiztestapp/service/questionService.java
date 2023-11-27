@@ -1,8 +1,11 @@
 package com.mahesh.quiztestapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.mahesh.quiztestapp.DAO.QuestionDAO;
@@ -13,20 +16,36 @@ public class questionService {
 
 	@Autowired
 	QuestionDAO questionDAO;
-	public List<Question> getAllQuestions() {
+	public ResponseEntity<List<Question>> getAllQuestions() {
+		try {
+			return new ResponseEntity<>( questionDAO.findAll(),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		return questionDAO.findAll();
+		return new ResponseEntity<>( new ArrayList<>(),HttpStatus.BAD_REQUEST);
 	}
 	
-	public List<Question> getQuestionByCategory(String cat) {
-		// TODO Auto-generated method stub
-		return questionDAO.findByCategory(cat);
+	public ResponseEntity<List<Question>> getQuestionByCategory(String cat) {
+		try {
+			return new ResponseEntity<>( questionDAO.findByCategory(cat),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<>( new ArrayList<>(),HttpStatus.BAD_REQUEST);
 	}
 
-	public String addQuestion(Question question) {
-		// TODO Auto-generated method stub
-		questionDAO.save(question);
-		return "success";
+	public ResponseEntity< String> addQuestion(Question question) {
+
+		try {
+			questionDAO.save(question);
+			return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>( "Failed",HttpStatus.BAD_REQUEST);
+		
 	}
 
 }
